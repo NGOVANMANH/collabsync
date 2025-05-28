@@ -1,4 +1,6 @@
-using BlogService.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using UserService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,15 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddMongoDb(builder.Configuration.GetConnectionString("BlogServiceDatabase") ?? throw new InvalidOperationException("MongoDB connection string is not configured."));
+builder.Services.AddDbContext<UserServiceDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UserServiceDatabase"));
+});
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = false; // Disable automatic model state validation
+});
 
 var app = builder.Build();
 

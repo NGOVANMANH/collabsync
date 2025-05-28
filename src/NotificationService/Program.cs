@@ -1,5 +1,3 @@
-using BlogService.Extensions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,8 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-builder.Services.AddMongoDb(builder.Configuration.GetConnectionString("BlogServiceDatabase") ?? throw new InvalidOperationException("MongoDB connection string is not configured."));
 
 var app = builder.Build();
 
