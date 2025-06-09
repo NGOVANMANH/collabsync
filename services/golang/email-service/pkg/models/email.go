@@ -6,3 +6,12 @@ type EmailMessage struct {
 	Body        string   `json:"body"`
 	Attachments []string `json:"attachments,omitempty"`
 }
+
+func NewEmailMessage(to, subject, body string, attachments ...string) *EmailMessage {
+	return &EmailMessage{
+		To:          to,
+		Subject:     subject,
+		Body:        body,
+		Attachments: attachments,
+	}
+}

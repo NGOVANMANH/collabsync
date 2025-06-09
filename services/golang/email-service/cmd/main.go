@@ -6,13 +6,10 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConfig();
+	cfg := config.LoadConfig()
 
-	fmt.Println("Kafka Broker:", cfg.KafkaBroker)
-	fmt.Println("Kafka Topic:", cfg.KafkaTopic)
-	fmt.Println("SMTP Host:", cfg.SMTPHost)
-	fmt.Println("SMTP Port:", cfg.SMTPPort)
-	fmt.Println("SMTP User:", cfg.SMTPUser)
-	fmt.Println("SMTP Password:", cfg.SMTPPassword)
-	fmt.Println("Email Service is running with the above configuration.")
+	// Initialize the email service with the loaded configuration
+	fmt.Printf("Email Service Configuration:\n")
+	fmt.Printf("Kafka Broker: %s\n", cfg.KafkaBroker)
+	fmt.Printf("Kafka Topic: %s\n", cfg.KafkaTopic)
 }

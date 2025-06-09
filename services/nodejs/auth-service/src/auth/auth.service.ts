@@ -86,6 +86,7 @@ export class AuthService {
       timezone?: string;
       dateOfBirth?: Date;
     };
+    verificationUrl?: string; // Optional, can be used for email verification
   }> {
     const {
       email,
@@ -137,6 +138,7 @@ export class AuthService {
         timezone: newUser.timezone,
         dateOfBirth: newUser.dateOfBirth,
       },
+      verificationUrl: 'mock-verification-url', // Replace with actual verification URL logic
     };
   }
 }
