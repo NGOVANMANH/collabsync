@@ -1,5 +1,10 @@
 package email
 
+import (
+	"bytes"
+	"html/template"
+)
+
 var emailTemplate = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,11 +79,26 @@ type EmailTemplateData struct {
 	VerificationURL string
 }
 
-// GetEmailTemplateData returns a populated EmailTemplateData struct.
-func GetEmailTemplateData(userName, subject, verificationURL string) *EmailTemplateData {
+// NewEmailTemplateData creates a new EmailTemplateData instance.
+func NewEmailTemplateData(userName, subject, verificationURL string) *EmailTemplateData {
 	return &EmailTemplateData{
 		UserName:        userName,
 		Subject:         subject,
 		VerificationURL: verificationURL,
 	}
+}
+
+// GetEmailTemplate renders the email template with the given data.
+func GetEmailTemplate(data *EmailTemplateData) (string, error) {
+	tmpl, err := template.New("email").Parse(emailTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
 }
