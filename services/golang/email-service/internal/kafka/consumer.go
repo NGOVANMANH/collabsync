@@ -1,0 +1,4 @@
+package kafka
+
+func StartComsumer() {
+}

@@ -2,24 +2,45 @@ package main
 
 import (
 	"email-service/config"
-	"email-service/internal/email"
-	"fmt"
+	"log"
 )
 
 func main() {
 	cfg := config.LoadConfig()
 
-	// Initialize the email service with the loaded configuration
-	fmt.Printf("Email Service Configuration:\n")
-	fmt.Printf("Kafka Broker: %s\n", cfg.KafkaBroker)
-	fmt.Printf("Kafka Topic: %s\n", cfg.KafkaTopic)
+	// emailService := email.NewEmailService(
+	// 	cfg.SMTPHost,
+	// 	cfg.SMTPPort,
+	// 	cfg.SMTPUser,
+	// 	cfg.SMTPPassword,
+	// 	cfg.SMTPUser, // from address
+	// )
 
-	emailTemplate, err := email.GetEmailTemplate(email.NewEmailTemplateData("Name", "Subject", "Body content"))
-	if err != nil {
-		fmt.Printf("Error generating email template: %v\n", err)
-		return
-	}
+	// emailTemplateData, err := email.GetEmailTemplate(email.NewEmailTemplateData(
+	// 	"Test Email",
+	// 	"Hello, this is a test email sent from the email service.",
+	// 	"https://example.com/verify?token",
+	// ))
 
-	fmt.Println("Generated Email Template:")
-	fmt.Println(emailTemplate)
+	// if err != nil {
+	// 	log.Fatalf("Failed to get email template: %v", err)
+	// }
+
+	// emailMessage := models.NewEmailMessage(
+	// 	"21522328@gm.uit.edu.vn",              // recipient
+	// 	"Test Email",                          // subject
+	// 	emailTemplateData,                     // body
+	// 	"https://example.com/attachment1.pdf", // attachment URL or file path
+	// )
+
+	// err = emailService.Send(emailMessage)
+	// if err != nil {
+	// 	log.Fatalf("Failed to send email: %v", err)
+	// }
+
+	// log.Println("Email sent successfully")
+
+	// event.StartConsumer(cfg)
+
+	log.Println(cfg.KafkaBroker)
 }

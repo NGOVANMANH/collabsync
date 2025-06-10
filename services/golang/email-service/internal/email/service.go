@@ -1,11 +1,12 @@
 package email
 
 import (
+	"bytes"
+	"email-service/pkg/models"
 	"fmt"
 	"net/smtp"
 )
 
-// EmailService provides methods to send emails.
 type EmailService struct {
 	SMTPHost string
 	SMTPPort string
@@ -14,7 +15,6 @@ type EmailService struct {
 	From     string
 }
 
-// NewEmailService creates a new EmailService.
 func NewEmailService(host, port, username, password, from string) *EmailService {
 	return &EmailService{
 		SMTPHost: host,
@@ -25,10 +25,33 @@ func NewEmailService(host, port, username, password, from string) *EmailService 
 	}
 }
 
-// Send sends an email to the specified recipient.
-func (s *EmailService) Send(to, subject, body string) error {
+func (s *EmailService) Send(emailMessage *models.EmailMessage) error {
+	if emailMessage == nil {
+		return fmt.Errorf("email message is nil")
+	}
+
+	var msg bytes.Buffer
+	msg.WriteString(fmt.Sprintf("From: %s\r\n", s.From))
+	msg.WriteString(fmt.Sprintf("To: %s\r\n", emailMessage.To))
+	msg.WriteString(fmt.Sprintf("Subject: %s\r\n", emailMessage.Subject))
+	msg.WriteString("MIME-Version: 1.0\r\n")
+	msg.WriteString("Content-Type: text/html; charset=\"UTF-8\"\r\n")
+	msg.WriteString("\r\n")
+	msg.WriteString(emailMessage.Body)
+
 	auth := smtp.PlainAuth("", s.Username, s.Password, s.SMTPHost)
-	msg := []byte(fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s", s.From, to, subject, body))
-	addr := fmt.Sprintf("%s:%s", s.SMTPHost, s.SMTPPort)
-	return smtp.SendMail(addr, auth, s.From, []string{to}, msg)
+
+	err := smtp.SendMail(
+		s.SMTPHost+":"+s.SMTPPort,
+		auth,
+		s.From,
+		[]string{emailMessage.To},
+		msg.Bytes(),
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to send email: %w", err)
+	}
+
+	return nil
 }

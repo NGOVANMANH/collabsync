@@ -36,15 +36,13 @@ export class AuthController {
         .json({ message: 'Email and password are required.' });
     }
 
-    const user = await this.authService.register(dto);
+    const { user, verificationUrl } = await this.authService.register(dto);
 
     this.userEventProducer
       .sendUserCreatedEvent({
-        user: {
-          id: user.user.id,
-          email: user.user.email,
-        },
-        verificationUrl: user.verificationUrl || '',
+        user_id: user.id,
+        email: user.email,
+        verification_url: verificationUrl || '',
       })
       .catch((error) => {
         console.error('Error sending user created event:', error);
