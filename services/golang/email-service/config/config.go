@@ -13,6 +13,7 @@ type Config struct {
 	SMTPPort     string
 	SMTPUser     string
 	SMTPPassword string
+	SMTPFrom     string
 }
 
 func LoadConfig() *Config {
@@ -24,5 +25,6 @@ func LoadConfig() *Config {
 		SMTPHost:     os.Getenv("SMTP_HOST"),
 		SMTPPort:     os.Getenv("SMTP_PORT"),
 		SMTPUser:     os.Getenv("SMTP_USER"),
-		SMTPPassword: os.Getenv("SMTP_PASSWORD")}
+		SMTPPassword: os.Getenv("SMTP_PASSWORD"),
+		SMTPFrom:     os.Getenv("SMTP_FROM")}
 }

@@ -10,7 +10,7 @@ var emailTemplate = `<!DOCTYPE html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{.Subject}}</title>
+	<title>{{.Title}}</title>
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -75,17 +75,8 @@ var emailTemplate = `<!DOCTYPE html>
 // EmailTemplateData holds the data for rendering the email template.
 type EmailTemplateData struct {
 	UserName        string
-	Subject         string
+	Title           string
 	VerificationURL string
-}
-
-// NewEmailTemplateData creates a new EmailTemplateData instance.
-func NewEmailTemplateData(userName, subject, verificationURL string) *EmailTemplateData {
-	return &EmailTemplateData{
-		UserName:        userName,
-		Subject:         subject,
-		VerificationURL: verificationURL,
-	}
 }
 
 // GetEmailTemplate renders the email template with the given data.
