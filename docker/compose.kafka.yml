@@ -1,5 +1,4 @@
-name: collabsync_message_broker
-
+name: collabsync-message-broker
 services:
   kafka:
     image: apache/kafka-native

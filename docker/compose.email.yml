@@ -1,5 +1,4 @@
 name: email-service
-
 services:
   email-service:
     build:
