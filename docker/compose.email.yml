@@ -1,0 +1,18 @@
+name: email-service
+
+services:
+  email-service:
+    build:
+      context: ../services/golang/email-service
+      dockerfile: Dockerfile
+    container_name: email-service
+    environment:
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM}
+      - KAFKA_BROKER=${KAFKA_BROKER}
+      - KAFKA_TOPIC=${KAFKA_TOPIC}
+    env_file:
+      - ../services/golang/email-service/.env

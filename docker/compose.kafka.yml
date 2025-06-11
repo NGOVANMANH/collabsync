@@ -1,3 +1,5 @@
+name: collabsync_message_broker
+
 services:
   kafka:
     image: apache/kafka-native
@@ -20,7 +22,7 @@ services:
 
       # Required for a single node cluster
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  
+
   kafka-ui:
     image: kafbat/kafka-ui:main
     ports:
