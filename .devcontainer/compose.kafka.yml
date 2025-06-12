@@ -1,4 +1,4 @@
-name: collabsync-message-broker
+name: collabsync
 services:
   kafka:
     image: apache/kafka-native
@@ -32,3 +32,8 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
     depends_on:
       - kafka
+
+networks:
+  default:
+    name: collabsync_default
+    driver: bridge

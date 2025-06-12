@@ -17,7 +17,7 @@ public class FileController : ControllerBase
     }
 
     [HttpPost]
-    [FileAllowedExtensionFilter]
+    [FileTypeAllowedFilter]
     public async Task<IActionResult> UploadMultipleFiles(List<IFormFile> files)
     {
         if (files == null || files.Count == 0)

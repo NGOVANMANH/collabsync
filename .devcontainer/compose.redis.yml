@@ -1,4 +1,4 @@
-name: redis-service
+name: collabsync
 services:
   redis:
     image: redis:latest
@@ -24,5 +24,10 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ./backup/redis_data
+      device: ./backup/redis-data
       o: bind
+
+networks:
+  default:
+    name: collabsync_default
+    driver: bridge

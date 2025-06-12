@@ -1,4 +1,4 @@
-name: email-service
+name: collabsync
 services:
   email-service:
     build:
@@ -15,3 +15,8 @@ services:
       - KAFKA_TOPIC=${KAFKA_TOPIC}
     env_file:
       - ../services/golang/email-service/.env
+
+networks:
+  default:
+    name: collabsync_default
+    driver: bridge

@@ -3,19 +3,20 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace file_service.Filters;
 
-public class FileAllowedExtensionFilter : Attribute, IAsyncActionFilter
+public class FileTypeAllowedFilter : Attribute, IAsyncActionFilter
 {
-    private readonly List<string> _allowedFileExtensions = new List<string>();
+    private readonly List<string> _allowedFileTypes = new List<string>();
 
-    public FileAllowedExtensionFilter(string? extensions = null)
+    public FileTypeAllowedFilter(string? fileTypeCsv = null)
     {
-        _allowedFileExtensions = !string.IsNullOrWhiteSpace(extensions)
-       ? extensions.Split(',').Select(e => e.Trim().ToLowerInvariant()).ToList()
-       : Constants.ALLOWED_DOCUMENT_EXTENSIONS
-           .Concat(Constants.ALLOWED_IMAGE_EXTENSIONS)
-           .Concat(Constants.ALLOWED_VIDEO_EXTENSIONS)
-           .Concat(Constants.ALLOWED_OTHER_EXTENSIONS)
-           .ToList();
+        if (string.IsNullOrEmpty(fileTypeCsv))
+        {
+            _allowedFileTypes.AddRange(new[] { "image/jpeg", "image/png", "application/pdf" });
+        }
+        else
+        {
+            _allowedFileTypes.AddRange(fileTypeCsv.Split(',').Select(ft => ft.Trim().ToLowerInvariant()));
+        }
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -24,12 +25,12 @@ public class FileAllowedExtensionFilter : Attribute, IAsyncActionFilter
         {
             foreach (var file in files)
             {
-                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                if (!_allowedFileExtensions.Contains(extension))
+                var fileContentType = file.ContentType.ToLowerInvariant();
+                if (!_allowedFileTypes.Contains(fileContentType.Split('/')[0]))
                 {
                     context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                     await context.HttpContext.Response.WriteAsJsonAsync(BaseApiRes<string>.FromError(
-                        $"File extension '{extension}' is not allowed. Allowed extensions are: {string.Join(", ", _allowedFileExtensions)}"));
+                        $"File types not support: {string.Join(", ", _allowedFileTypes)}"));
                     return;
                 }
             }

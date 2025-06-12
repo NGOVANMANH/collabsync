@@ -35,3 +35,8 @@ volumes:
       type: none
       device: ./backup/auth-service-db-data
       o: bind
+
+networks:
+  default:
+    name: collabsync_default
+    driver: bridge

@@ -8,4 +8,5 @@ public class Attachment
     public string ContentType { get; set; } = null!;
     public bool IsLocalFile { get; set; } = true;
     public string FileUrl { get; set; } = null!;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

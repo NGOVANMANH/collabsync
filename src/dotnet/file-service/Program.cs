@@ -18,20 +18,20 @@ foreach (var path in Constants.FILE_STORAGE_PATHS)
     FileStorage.EnsureDirectoryExists(fullPath);
 }
 
-builder.Services.AddScoped<FileAllowedExtensionFilter>();
-builder.Services.AddScoped<IFileService>();
+builder.Services.AddScoped<FileTypeAllowedFilter>();
+builder.Services.AddScoped<IFileService, FileService>();
 
-builder.Services.AddStackExchangeRedisCache(options =>
-{
+// builder.Services.AddStackExchangeRedisCache(options =>
+// {
 
-    var redisConfig = builder.Configuration
-        .GetSection("Redis")
-        .Get<file_service.Config.RedisConfig>()
-        ?? throw new InvalidOperationException("Redis configuration is missing or invalid.");
+//     var redisConfig = builder.Configuration
+//         .GetSection("Redis")
+//         .Get<file_service.Config.RedisConfig>()
+//         ?? throw new InvalidOperationException("Redis configuration is missing or invalid.");
 
-    options.Configuration = redisConfig.ConnectionString;
-    options.InstanceName = redisConfig.InstanceName;
-});
+//     options.Configuration = redisConfig.ConnectionString;
+//     options.InstanceName = redisConfig.InstanceName;
+// });
 
 var app = builder.Build();
 
