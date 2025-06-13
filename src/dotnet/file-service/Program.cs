@@ -1,3 +1,4 @@
+using file_service;
 using file_service.Filters;
 using file_service.Services;
 using file_service.Utils;
@@ -20,6 +21,11 @@ foreach (var path in Constants.FILE_STORAGE_PATHS)
 
 builder.Services.AddScoped<FileTypeAllowedFilter>();
 builder.Services.AddScoped<IFileService, FileService>();
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 60 * Constants.MB; // Set max request body size to 50 MB
+});
 
 // builder.Services.AddStackExchangeRedisCache(options =>
 // {
