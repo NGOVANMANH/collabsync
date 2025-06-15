@@ -2,7 +2,7 @@ name: collabsync
 services:
   email-service:
     build:
-      context: ../services/golang/email-service
+      context: ../src/golang/email-service
       dockerfile: Dockerfile
     container_name: email-service
     environment:
@@ -13,10 +13,6 @@ services:
       - SMTP_FROM=${SMTP_FROM}
       - KAFKA_BROKER=${KAFKA_BROKER}
       - KAFKA_TOPIC=${KAFKA_TOPIC}
-    env_file:
-      - ../services/golang/email-service/.env
-
-networks:
-  default:
-    name: collabsync_default
-    driver: bridge
+    networks:
+      - collabsync-network
+    env_file: .env

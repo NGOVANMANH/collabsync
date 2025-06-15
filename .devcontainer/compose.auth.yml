@@ -1,4 +1,4 @@
-name: auth-service
+name: collabsync
 services:
   auth-service-db:
     image: mongo:latest
@@ -10,33 +10,6 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     volumes:
       - auth-service-db-data:/data/db
-
-  auth-service:
-    build:
-      context: ../services/nodejs/auth-service
-      dockerfile: Dockerfile
-    container_name: auth-service
-    ports:
-      - "3000:3000"
-    depends_on:
-      - auth-service-db
-    environment:
-      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@auth-service-db:27017/${MONGO_DBNAME}?authSource=admin
-      - JWT_SECRET=${JWT_SECRET}
-      - KAFKA_BROKER=${KAFKA_BROKER}
-      - KAFKA_TOPIC=${KAFKA_TOPIC}
-    env_file:
-      - ../services/nodejs/auth-service/.env
-
-volumes:
-  auth-service-db-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ./backup/auth-service-db-data
-      o: bind
-
-networks:
-  default:
-    name: collabsync_default
-    driver: bridge
+    networks:
+      - collabsync-network
+    env_file: .env

@@ -11,17 +11,6 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - file-service-db-data:/var/lib/postgresql/data
+    networks:
+      - collabsync-network
     env_file: .env
-
-volumes:
-  file-service-db-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ./backup/file-service-postgresql-data
-      o: bind
-
-networks:
-  default:
-    name: collabsync_default
-    driver: bridge

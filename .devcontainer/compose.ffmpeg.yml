@@ -7,10 +7,7 @@ services:
     environment:
       - FFMPEG_LOG_LEVEL=info
     volumes:
-      - ${FFMPEG_FOLDER_PATH}:/data
+      - ffmpeg-data:/data
     env_file: .env
-
-networks:
-  collabsync_default:
-    name: collabsync_default
-    driver: bridge
+    networks:
+      - collabsync-network

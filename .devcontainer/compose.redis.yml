@@ -16,18 +16,7 @@ services:
         "${REDIS_PASSWORD}",
       ]
     volumes:
-      - redis_data:/data
+      - redis-data:/data
     env_file: .env
-
-volumes:
-  redis_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ./backup/redis-data
-      o: bind
-
-networks:
-  default:
-    name: collabsync_default
-    driver: bridge
+    networks:
+      - collabsync-network
