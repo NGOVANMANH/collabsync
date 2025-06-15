@@ -9,4 +9,9 @@ public static class FileStorage
             Directory.CreateDirectory(directoryPath);
         }
     }
+
+    public static string GetLocalFilePath(string fileUrl)
+    {
+        return Path.Combine(Directory.GetCurrentDirectory(), Constants.FILE_STORAGE_ROOT, fileUrl);
+    }
 }

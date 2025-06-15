@@ -24,12 +24,14 @@ public static class Constants
     public const string FILE_STORAGE_AUDIOS = $"{FILE_STORAGE_ROOT}/Audios";
     public const string FILE_STORAGE_DOCUMENTS = $"{FILE_STORAGE_ROOT}/Documents";
     public const string FILE_STORAGE_OTHER = $"{FILE_STORAGE_ROOT}/Other";
+    public const string FILE_STORAGE_FFMPEG_FOLDER = $"{FILE_STORAGE_VIDEOS}/ffmpeg";
 
     public static readonly HashSet<string> FILE_STORAGE_PATHS = new()
     {
         FILE_STORAGE_ROOT,
         FILE_STORAGE_IMAGES,
         FILE_STORAGE_VIDEOS,
+        FILE_STORAGE_FFMPEG_FOLDER,
         FILE_STORAGE_AUDIOS,
         FILE_STORAGE_DOCUMENTS,
         FILE_STORAGE_OTHER

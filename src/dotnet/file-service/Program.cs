@@ -1,11 +1,15 @@
 using file_service;
+using file_service.Data;
 using file_service.Filters;
+using file_service.Repositories;
 using file_service.Services;
 using file_service.Utils;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+DotNetEnv.Env.Load();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -21,6 +25,25 @@ foreach (var path in Constants.FILE_STORAGE_PATHS)
 
 builder.Services.AddScoped<FileTypeAllowedFilter>();
 builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.AddDbContext<FileDbContext>(options =>
+{
+    options.UseNpgsql($"Host={Environment.GetEnvironmentVariable("POSTGRES_HOST")};" +
+        $"Port={Environment.GetEnvironmentVariable("POSTGRES_PORT")};" +
+        $"Database={Environment.GetEnvironmentVariable("POSTGRES_DB")};" +
+        $"Username={Environment.GetEnvironmentVariable("POSTGRES_USER")};" +
+        $"Password={Environment.GetEnvironmentVariable("POSTGRES_PASSWORD")}");
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
+
+builder.Services.AddScoped<IFileRepository, FileRepository>();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -40,6 +63,8 @@ builder.WebHost.ConfigureKestrel(options =>
 // });
 
 var app = builder.Build();
+
+app.UseCors("AllowAllOrigins");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

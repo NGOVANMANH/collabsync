@@ -1,12 +1,15 @@
-using System.Net.Mail;
+
+using file_service.Models;
 
 namespace file_service.Repositories;
 
 public interface IFileRepository
 {
-    Task<Guid> Create();
-    Task<bool> Update(Guid id, string fileName, long size, string contentType, bool isLocalFile, string fileUrl);
-    Task<bool> Delete(Guid id);
-    Task<Attachment?> GetById(Guid id);
-    Task<IEnumerable<Attachment>> GetByType(string contentType);
+    Task<Guid> Create(Attachment attachment);
+    Task<List<Guid>> Create(List<Attachment> attachments);
+    Task Update(Guid id, Attachment attachment);
+    Task Delete(Guid id);
+    Task<Attachment?> Get(Guid id);
+    Task<List<Attachment>> Get();
+    Task<int> Save();
 }
