@@ -1,0 +1,37 @@
+name: collabsync
+
+volumes:
+  auth-service-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./backup/auth-service-mongodb-data
+      o: bind
+
+  redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./backup/redis-data
+      o: bind
+
+  ffmpeg-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ${FFMPEG_FOLDER_PATH}
+      o: bind
+
+  file-service-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./backup/file-service-postgresql-data
+      o: bind
+
+networks:
+  collabsync-network:
+    driver: bridge
+    external: true
+    driver_opts:
+      com.docker.network.bridge.name: collabsync-network

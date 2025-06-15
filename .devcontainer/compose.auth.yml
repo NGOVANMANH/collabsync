@@ -1,0 +1,15 @@
+name: collabsync
+services:
+  auth-service-db:
+    image: mongo:latest
+    container_name: auth-service-db
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - auth-service-db-data:/data/db
+    networks:
+      - collabsync-network
+    env_file: .env

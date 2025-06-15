@@ -1,0 +1,13 @@
+name: collabsync
+
+services:
+  ffmpeg:
+    image: jrottenberg/ffmpeg:latest
+    container_name: ffmpeg
+    environment:
+      - FFMPEG_LOG_LEVEL=info
+    volumes:
+      - ffmpeg-data:/data
+    env_file: .env
+    networks:
+      - collabsync-network
