@@ -12,4 +12,3 @@ services:
       - auth-service-db-data:/data/db
     networks:
       - collabsync-network
-    env_file: .env

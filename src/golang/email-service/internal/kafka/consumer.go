@@ -36,7 +36,7 @@ func (k *KafkaService) StartConsumer(handelFunc func(eventType string, data json
 
 	ctx := context.Background()
 
-	fmt.Println("Consumer started...")
+	fmt.Println("Consumer " + k.Topic + " started...")
 
 	for {
 		m, err := r.ReadMessage(ctx)
@@ -53,6 +53,5 @@ func (k *KafkaService) StartConsumer(handelFunc func(eventType string, data json
 
 		// TODO: Pass to email service
 		handelFunc(event.Event, event.Data, k.EmailService)
-		log.Printf("received message: %s, event: %s", m.Value, event.Event)
 	}
 }

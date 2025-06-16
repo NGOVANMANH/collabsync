@@ -13,4 +13,3 @@ services:
       - file-service-db-data:/var/lib/postgresql/data
     networks:
       - collabsync-network
-    env_file: .env

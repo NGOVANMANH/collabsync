@@ -17,6 +17,5 @@ services:
       ]
     volumes:
       - redis-data:/data
-    env_file: .env
     networks:
       - collabsync-network
