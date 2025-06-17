@@ -11,4 +11,4 @@
 ./stop.sh
 ```
 ## Services
-[Link Text](src/golang/chat-service/Readme.md)
+[Chat Service](src/golang/chat-service/Readme.md)
