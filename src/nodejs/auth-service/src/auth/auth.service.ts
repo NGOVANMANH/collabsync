@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -32,21 +36,21 @@ export class AuthService {
     const { email, password } = dto;
 
     if (!email || !password) {
-      throw new Error('Email and password are required.');
+      throw new UnauthorizedException('Email and password are required.');
     }
 
     const user = await this.userModel.findOne({ email }).select('+password');
 
     if (!user) {
-      throw new Error('User not found.');
+      throw new NotFoundException('User not found.');
     }
 
     if (user.status !== UserStatus.ACTIVE) {
-      throw new Error('User account is not active.');
+      throw new UnauthorizedException('User account is not active.');
     }
 
     if (!(await comparePassword(password, user.password || ''))) {
-      throw new Error('Invalid email or password.');
+      throw new UnauthorizedException('Invalid email or password.');
     }
 
     const accessToken = await this.jwtService.signAsync({

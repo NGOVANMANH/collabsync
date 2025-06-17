@@ -21,15 +21,13 @@ export class User {
   // Primary identifiers
   @Prop({
     required: true,
-    unique: true,
     lowercase: true,
     trim: true,
-    index: true,
   })
   @IsEmail()
   email: string;
 
-  @Prop({ required: false, unique: true, sparse: true })
+  @Prop({ required: false })
   username?: string;
 
   // Authentication

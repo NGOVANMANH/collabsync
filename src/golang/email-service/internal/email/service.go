@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"email-service/pkg/models"
 	"fmt"
+	"log"
 	"net/smtp"
 )
 
@@ -52,6 +53,8 @@ func (s *EmailService) Send(emailMessage *models.EmailMessage) error {
 	if err != nil {
 		return fmt.Errorf("failed to send email: %w", err)
 	}
+
+	log.Printf("Email sent to %s with subject %s", emailMessage.To, emailMessage.Subject)
 
 	return nil
 }

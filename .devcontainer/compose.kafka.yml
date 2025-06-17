@@ -23,7 +23,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - collabsync-network
-    env_file: .env
 
   kafka-ui:
     image: kafbat/kafka-ui:main
@@ -37,4 +36,3 @@ services:
       - kafka
     networks:
       - collabsync-network
-    env_file: .env

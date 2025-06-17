@@ -8,6 +8,5 @@ services:
       - FFMPEG_LOG_LEVEL=info
     volumes:
       - ffmpeg-data:/data
-    env_file: .env
     networks:
       - collabsync-network
