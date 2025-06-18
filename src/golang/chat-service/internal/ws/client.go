@@ -1,6 +1,12 @@
 package ws
 
-import "github.com/gorilla/websocket"
+import (
+	"chat-service/pkg/models"
+	"context"
+	"encoding/json"
+
+	"github.com/gorilla/websocket"
+)
 
 type Client struct {
 	ID   string
@@ -20,6 +26,19 @@ func (c *Client) ReadPump() {
 		if err != nil {
 			break
 		}
+
+		msg := &models.Message{}
+		if err := json.Unmarshal(message, msg); err != nil {
+			continue // Ignore malformed messages
+		}
+
+		// ✅ Produce to Kafka
+		if err := kafkaService.Produce(context.Background(), msg); err != nil {
+			// Optional: log or retry
+			continue
+		}
+
+		// ✅ Broadcast to other WebSocket clients
 		c.Hub.Broadcast <- message
 	}
 }

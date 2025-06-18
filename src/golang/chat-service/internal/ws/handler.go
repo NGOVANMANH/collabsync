@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"chat-service/internal/kafka"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -11,9 +12,11 @@ var upgrader = websocket.Upgrader{
 }
 
 var hub *Hub
+var kafkaService *kafka.KafkaService
 
-func InitHub() {
+func InitHub(kafka *kafka.KafkaService) {
 	hub = NewHub()
+	kafkaService = kafka
 	go hub.Run()
 }
 

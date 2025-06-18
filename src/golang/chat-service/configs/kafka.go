@@ -1,7 +1,17 @@
 package configs
 
 type KafkaConfig struct {
-	BootstrapServers []string
-	Topic            string
-	ConsumerGroup    string
+	Brokers   []string
+	Topic     string
+	GroupID   string
+	Partition int
+}
+
+func NewKafkaConfig(brokers []string, topic, groupID string, partition int) *KafkaConfig {
+	return &KafkaConfig{
+		Brokers:   brokers,
+		Topic:     topic,
+		GroupID:   groupID,
+		Partition: partition,
+	}
 }
