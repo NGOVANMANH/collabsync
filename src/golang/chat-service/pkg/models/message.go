@@ -7,23 +7,34 @@ import (
 )
 
 type Message struct {
-	ID        uuid.UUID `json:"id"`
-	Content   string    `json:"content"`
-	SenderID  string    `json:"sender_id"`
-	RoomID    string    `json:"room_id"`
-	Timestamp int64     `json:"timestamp"`
+	ID          uuid.UUID   `json:"id" db:"id"`
+	Content     string      `json:"content" db:"content"`
+	SenderID    string      `json:"sender_id" db:"sender_id"`
+	RoomID      string      `json:"room_id" db:"room_id"`
+	Attachments []uuid.UUID `json:"attachments,omitempty" db:"attachments"`
+	CreatedAt   time.Time   `json:"created_at" db:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at" db:"updated_at"`
 }
 
-func NewMessage(content, senderID, roomID string) *Message {
+func NewMessage(content, senderID, roomID string, attachments []uuid.UUID) *Message {
 	return &Message{
-		ID:        uuid.New(),
-		Content:   content,
-		SenderID:  senderID,
-		RoomID:    roomID,
-		Timestamp: getCurrentTimestamp(),
+		ID:          uuid.New(),
+		Content:     content,
+		SenderID:    senderID,
+		RoomID:      roomID,
+		Attachments: attachments,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 }
 
-func getCurrentTimestamp() int64 {
-	return time.Now().Unix()
+type MessageRequest struct {
+	Content     string      `json:"content"`
+	SenderID    string      `json:"sender_id"`
+	RoomID      string      `json:"room_id"`
+	Attachments []uuid.UUID `json:"attachments,omitempty"`
+}
+
+func (mr *MessageRequest) ToMessage() *Message {
+	return NewMessage(mr.Content, mr.SenderID, mr.RoomID, mr.Attachments)
 }

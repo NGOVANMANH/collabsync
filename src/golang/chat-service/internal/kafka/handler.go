@@ -5,13 +5,13 @@ import (
 	"log"
 )
 
-func HandleMessage(msg *models.Message) error {
-	// Process the message
-	// For example, you can log it or send it to a WebSocket hub
-	log.Printf("Received message: %s", msg.Content)
+func handleMessage(msg *models.Message) error {
+	log.Printf("Received message: %s from sender: %s in room: %s", msg.Content, msg.SenderID, msg.RoomID)
 
-	// Here you can add your logic to handle the message
-	// For example, sending it to a WebSocket hub or saving it to a database
+	_, err := messageService.CreateMessage(msg)
+	if err != nil {
+		return err
+	}
 
-	return nil // Return nil if processed successfully
+	return nil
 }

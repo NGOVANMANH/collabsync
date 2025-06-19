@@ -2,8 +2,8 @@ package ws
 
 import (
 	"chat-service/pkg/models"
-	"context"
 	"encoding/json"
+	"log"
 
 	"github.com/gorilla/websocket"
 )
@@ -27,16 +27,19 @@ func (c *Client) ReadPump() {
 			break
 		}
 
-		msg := &models.Message{}
-		if err := json.Unmarshal(message, msg); err != nil {
-			continue // Ignore malformed messages
-		}
+		go func() {
+			msg := &models.MessageRequest{}
+			if err := json.Unmarshal(message, msg); err != nil {
+				log.Printf("Failed to unmarshal message: %v", err)
+				return
+			}
 
-		// ✅ Produce to Kafka
-		if err := kafkaService.Produce(context.Background(), msg); err != nil {
-			// Optional: log or retry
-			continue
-		}
+			// ✅ Produce to Kafka
+			if err := kafkaService.Produce(msg.ToMessage()); err != nil {
+				// Optional: log or retry
+				log.Printf("Failed to produce message to Kafka: %v", err)
+			}
+		}()
 
 		// ✅ Broadcast to other WebSocket clients
 		c.Hub.Broadcast <- message
