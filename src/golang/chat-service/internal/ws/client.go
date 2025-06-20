@@ -9,10 +9,11 @@ import (
 )
 
 type Client struct {
-	ID   string
-	Conn *websocket.Conn
-	Send chan []byte
-	Hub  *Hub
+	ID         string
+	Conn       *websocket.Conn
+	Send       chan []byte
+	Hub        *Hub
+	ClientInfo *models.ClientInfo
 }
 
 func (c *Client) ReadPump() {
@@ -54,5 +55,13 @@ func (c *Client) WritePump() {
 			return
 		}
 		c.Conn.WriteMessage(websocket.TextMessage, msg)
+	}
+}
+
+func (c *Client) SendMessage(msg *models.Message, toClientIds []string) {
+	message, err := json.Marshal(msg)
+	if err != nil {
+		log.Printf("Failed to marshal message: %v", err)
+		return
 	}
 }

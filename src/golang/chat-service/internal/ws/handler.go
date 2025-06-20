@@ -2,6 +2,7 @@ package ws
 
 import (
 	"chat-service/internal/kafka"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -32,6 +33,9 @@ func HandleWS(w http.ResponseWriter, r *http.Request) {
 		Send: make(chan []byte, 256),
 		Hub:  hub,
 	}
+
+	// log full client information
+	log.Printf("New client connected: %s", client.ID)
 
 	hub.Register <- client
 

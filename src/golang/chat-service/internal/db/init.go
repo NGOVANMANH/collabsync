@@ -12,7 +12,6 @@ func Init() (*sql.DB, error) {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	defer db.Close()
 
 	// Test connection
 	if err = db.Ping(); err != nil {

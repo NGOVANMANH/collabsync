@@ -2,6 +2,7 @@ name: collabsync
 services:
   kafka:
     image: apache/kafka-native
+    container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -26,6 +27,7 @@ services:
 
   kafka-ui:
     image: kafbat/kafka-ui:main
+    container_name: kafka-ui
     ports:
       - 8080:8080
     environment:

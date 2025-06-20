@@ -19,6 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to initialize database:", err)
 	}
+	defer db.Close()
 
 	// Create repository, service
 	repo := message.NewMessageRepository(db)
