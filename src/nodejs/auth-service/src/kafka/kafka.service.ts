@@ -1,4 +1,9 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Kafka, Producer } from 'kafkajs';
 
 @Injectable()
@@ -17,18 +22,23 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     try {
       await this.producer.disconnect();
-      console.log('Kafka producer disconnected successfully.');
+      Logger.log('Kafka producer disconnected successfully.', 'KafkaService');
     } catch (error) {
-      console.error('Error disconnecting Kafka producer:', error);
+      Logger.error(
+        'Error disconnecting Kafka producer:',
+        error,
+        'KafkaService',
+      );
     }
   }
 
   async onModuleInit() {
     try {
       await this.producer.connect();
-      console.log('Kafka producer connected successfully.');
+      Logger.log('Kafka producer connected successfully.', 'KafkaService');
     } catch (error) {
-      console.error('Error connecting Kafka producer:', error);
+      Logger.error('Error connecting Kafka producer:', error, 'KafkaService');
+      throw new Error('Failed to connect Kafka producer');
     }
   }
 
@@ -42,9 +52,17 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
           },
         ],
       });
-      console.log(`Message sent to topic ${topic}:`, message);
+      Logger.log(
+        `Message sent to topic ${topic}: ${JSON.stringify(message)}`,
+        'KafkaService',
+      );
     } catch (error) {
-      console.error(`Error sending message to topic ${topic}:`, error);
+      Logger.error(
+        `Error sending message to topic ${topic}:`,
+        error,
+        'KafkaService',
+      );
+      throw new Error(`Failed to send message to topic ${topic}`);
     }
   }
 }

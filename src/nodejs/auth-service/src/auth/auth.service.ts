@@ -6,6 +6,7 @@ import { LoginDto } from 'src/auth/dtos/login.dto';
 import { RegisterDto } from 'src/auth/dtos/register.dto';
 import { User, UserStatus } from 'src/auth/schemas/user.schema';
 import { comparePassword, hashPassword } from 'src/utils/hash';
+import { UserDto } from './dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,18 +16,7 @@ export class AuthService {
   ) {}
 
   async login(dto: LoginDto): Promise<{
-    user: {
-      id: string;
-      email: string;
-      username?: string;
-      firstName?: string;
-      lastName?: string;
-      displayName?: string;
-      avatar?: string;
-      locale?: string;
-      timezone?: string;
-      dateOfBirth?: Date;
-    };
+    user: UserDto;
     accessToken: string;
   }> {
     const { email, password } = dto;
@@ -74,18 +64,7 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto): Promise<{
-    user: {
-      id: string;
-      email: string;
-      username?: string;
-      firstName?: string;
-      lastName?: string;
-      displayName?: string;
-      avatar?: string;
-      locale?: string;
-      timezone?: string;
-      dateOfBirth?: Date;
-    };
+    user: UserDto;
     verificationUrl?: string; // Optional, can be used for email verification
   }> {
     const {
@@ -125,6 +104,7 @@ export class AuthService {
     });
 
     await newUser.save();
+
     return {
       user: {
         id: newUser._id.toString(),
@@ -138,7 +118,7 @@ export class AuthService {
         timezone: newUser.timezone,
         dateOfBirth: newUser.dateOfBirth,
       },
-      verificationUrl: 'mock-verification-url', // Replace with actual verification URL logic
+      verificationUrl: 'mock-verification-url-ok', // Replace with actual verification URL logic
     };
   }
 }

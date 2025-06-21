@@ -1,9 +1,18 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { LoginDto } from 'src/auth/dtos/login.dto';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dtos/register.dto';
 import { UserEventProducer } from './events/producers/user-event.producer';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -49,5 +58,13 @@ export class AuthController {
       });
 
     return res.status(HttpStatus.CREATED).json(user);
+  }
+
+  @Get('test-auth')
+  @UseGuards(AuthGuard)
+  testAuth(@Res() res: Response): Response {
+    return res.status(HttpStatus.OK).json({
+      message: 'Auth service is running',
+    });
   }
 }
