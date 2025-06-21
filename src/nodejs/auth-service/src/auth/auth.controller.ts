@@ -3,15 +3,18 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Logger,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { LoginDto } from 'src/auth/dtos/login.dto';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dtos/register.dto';
 import { UserEventProducer } from './events/producers/user-event.producer';
+import { JwtPayloadDto } from './dtos/jwt-payload.dto';
 import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
@@ -54,7 +57,11 @@ export class AuthController {
         verification_url: verificationUrl || '',
       })
       .catch((error) => {
-        console.error('Error sending user created event:', error);
+        Logger.error(
+          'Error sending user created event:',
+          error,
+          'AuthController',
+        );
       });
 
     return res.status(HttpStatus.CREATED).json(user);
@@ -62,9 +69,7 @@ export class AuthController {
 
   @Get('test-auth')
   @UseGuards(AuthGuard)
-  testAuth(@Res() res: Response): Response {
-    return res.status(HttpStatus.OK).json({
-      message: 'Auth service is running',
-    });
+  testAuth(@Req() req: Request & { user: JwtPayloadDto }): any {
+    return req.user;
   }
 }

@@ -1,10 +1,8 @@
 #!/bin/bash
 set -e
 
-# List of docker compose files for services
 SERVICES=(
   auth
-#   email
   ffmpeg
   file
   kafka
@@ -15,21 +13,30 @@ echo "==========================================="
 echo "🔧 Bootstrapping Docker Environment: collabsync"
 echo "==========================================="
 
-# Start networks
+# Merge .env files
+./copyenv.sh
+
+# Create network only if not exists
+NETWORK_NAME="collabsync-network"
 echo "[+] Creating network..."
-# Create network if it doesn't exist
-if ! docker network ls --format '{{.Name}}' | grep -q "^collabsync-network$"; then
-  echo "[+] Creating Docker network: collabsync-network"
-  docker network create collabsync-network
+if ! docker network ls --format '{{.Name}}' | grep -q "^${NETWORK_NAME}$"; then
+  echo "[+] Creating Docker network: ${NETWORK_NAME}"
+  docker network create "${NETWORK_NAME}"
 else
-  echo "[✓] Docker network already exists: collabsync-network"
+  echo "[✓] Docker network already exists: ${NETWORK_NAME}"
 fi
 
-# Start services
+# Start all services in parallel
 for service in "${SERVICES[@]}"; do
   echo "[+] Starting $service service..."
-  docker compose -f compose.base.yml -f "compose.${service}.yml" up -d
+  docker compose \
+    -f .devcontainer/compose.base.yml \
+    -f .devcontainer/compose.${service}.yml \
+    up -d --remove-orphans &
 done
+
+# Wait for all background jobs
+wait
 
 echo "==========================================="
 echo "🚀 Docker environment bootstrapped successfully!"

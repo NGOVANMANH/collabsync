@@ -5,6 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KafkaModule } from './kafka/kafka.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RoleService } from './role/role.service';
 
 @Module({
   imports: [
@@ -33,6 +35,6 @@ import { KafkaModule } from './kafka/kafka.module';
     KafkaModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RoleService],
 })
 export class AppModule {}

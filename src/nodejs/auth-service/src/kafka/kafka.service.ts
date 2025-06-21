@@ -38,7 +38,6 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
       Logger.log('Kafka producer connected successfully.', 'KafkaService');
     } catch (error) {
       Logger.error('Error connecting Kafka producer:', error, 'KafkaService');
-      throw new Error('Failed to connect Kafka producer');
     }
   }
 
@@ -52,17 +51,13 @@ export class KafkaService implements OnModuleInit, OnModuleDestroy {
           },
         ],
       });
-      Logger.log(
-        `Message sent to topic ${topic}: ${JSON.stringify(message)}`,
-        'KafkaService',
-      );
+      Logger.log(`Message sent to topic ${topic}:`, message, 'KafkaService');
     } catch (error) {
       Logger.error(
         `Error sending message to topic ${topic}:`,
         error,
         'KafkaService',
       );
-      throw new Error(`Failed to send message to topic ${topic}`);
     }
   }
 }
