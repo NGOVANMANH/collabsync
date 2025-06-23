@@ -15,18 +15,18 @@ volumes:
       device: ./backup/redis-data
       o: bind
 
-  ffmpeg-data:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${FFMPEG_FOLDER_PATH}
-      o: bind
-
   file-service-db-data:
     driver: local
     driver_opts:
       type: none
       device: ./backup/file-service-postgresql-data
+      o: bind
+
+  chat-service-db-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./backup/chat-service-postgresql-data
       o: bind
 
 networks:
