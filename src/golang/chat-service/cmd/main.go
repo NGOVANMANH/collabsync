@@ -1,56 +1,41 @@
 package main
 
 import (
-	"chat-service/configs"
-	"chat-service/internal/db"
 	"chat-service/internal/kafka"
-	"chat-service/internal/message"
 	"chat-service/internal/redis"
 	"chat-service/internal/ws"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	redis.Init()
+	defer redis.Close()
 
-	// Database connection
-	db, err := db.Init()
-	if err != nil {
-		log.Fatal("Failed to initialize database:", err)
-	}
-	defer db.Close()
+	kafka.Init()
+	defer kafka.Close()
 
-	// Create repository, service
-	repo := message.NewMessageRepository(db)
-	messageService := message.NewMessageService(repo)
+	kafka.StartConsumer()
 
-	// Initialize Kafka
-	config := &configs.KafkaConfig{
-		Brokers: []string{"localhost:9092"},
-		Topic:   "chat-messages",
-		GroupID: "chat-service",
-	}
+	hub := ws.InitHub()
 
-	kafkaService, err := kafka.NewKafkaService(config, messageService)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer kafkaService.Close()
+	go hub.Run()
+	http.HandleFunc("/ws", hub.HandleWs)
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
 
-	go func() {
-		err := kafkaService.StartConsume()
-		if err != nil {
-			log.Printf("Consumer error: %v", err)
-		}
-	}()
+	// Serve static files for testing
+	http.Handle("/", http.FileServer(http.Dir("./static/")))
 
-	ws.InitHub(kafkaService)
-	http.HandleFunc("/ws", ws.HandleWS)
-
-	log.Println("✅ WebSocket server started at :8081")
-	err = http.ListenAndServe(":8081", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	log.Println("WebSocket server starting on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

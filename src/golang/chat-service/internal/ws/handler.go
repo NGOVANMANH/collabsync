@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"chat-service/internal/kafka"
 	"log"
 	"net/http"
 
@@ -9,36 +8,44 @@ import (
 )
 
 var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
+	CheckOrigin: func(r *http.Request) bool {
+		// Allow connections from any origin for development
+		// In production, implement proper origin checking
+		return true
+	},
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
-var hub *Hub
-var kafkaService *kafka.KafkaService
-
-func InitHub(kafka *kafka.KafkaService) {
-	hub = NewHub()
-	kafkaService = kafka
-	go hub.Run()
-}
-
-func HandleWS(w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
+func (h *Hub) HandleWs(w http.ResponseWriter, r *http.Request) {
+	// Get client ID from query params or generate one
+	clientID := r.URL.Query().Get("id")
+	if clientID == "" {
+		http.Error(w, "Missing client ID", http.StatusBadRequest)
 		return
 	}
 
-	client := &Client{
-		ID:   r.RemoteAddr,
-		Conn: conn,
-		Send: make(chan []byte, 256),
-		Hub:  hub,
+	// Upgrade HTTP connection to WebSocket
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("WebSocket upgrade failed: %v", err)
+		return
 	}
 
-	// log full client information
-	log.Printf("New client connected: %s", client.ID)
+	// Create new client
+	client := &Client{
+		ID:   clientID,
+		Hub:  h,
+		Conn: conn,
+		Send: make(chan []byte, 256),
+	}
 
-	hub.Register <- client
+	// Register client with hub
+	h.Register <- client
 
-	go client.WritePump()
-	go client.ReadPump()
+	// Start goroutines for reading and writing
+	go client.WriteMessages()
+	go client.ReadMessages()
+
+	log.Printf("Client %s connected", clientID)
 }
