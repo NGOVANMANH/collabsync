@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KafkaModule } from './kafka/kafka.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RoleService } from './role/role.service';
@@ -15,12 +14,12 @@ import { RoleService } from './role/role.service';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const host = configService.get('MONGO_HOST', 'localhost');
-        const port = configService.get('MONGO_PORT', '27017');
-        const db = configService.get('MONGO_DBNAME', 'mydatabase');
-        const user = configService.get('MONGO_USER');
-        const pass = configService.get('MONGO_PASSWORD');
+      useFactory: (configService: ConfigService) => {
+        const host = configService.get<string>('MONGO_HOST', 'localhost');
+        const port = configService.get<string>('MONGO_PORT', '27017');
+        const db = configService.get<string>('MONGO_DBNAME', 'mydatabase');
+        const user = configService.get<string>('MONGO_USER');
+        const pass = configService.get<string>('MONGO_PASSWORD');
 
         const authPart = user && pass ? `${user}:${pass}@` : '';
         const uri = `mongodb://${authPart}${host}:${port}/${db}?authSource=admin`;

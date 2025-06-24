@@ -67,9 +67,43 @@ export class AuthController {
     return res.status(HttpStatus.CREATED).json(user);
   }
 
-  @Get('test-auth')
+  @Get('me/profile')
   @UseGuards(AuthGuard)
-  testAuth(@Req() req: Request & { user: JwtPayloadDto }): any {
-    return req.user;
+  async getProfile(
+    @Req() req: Request & { user: JwtPayloadDto },
+    @Res() res: Response,
+  ): Promise<any> {
+    const user = req.user;
+    if (!user) {
+      return res
+        .status(HttpStatus.UNAUTHORIZED)
+        .json({ message: 'Unauthorized' });
+    }
+
+    const profile = await this.authService.getProfile(user.user_id);
+    return res.status(HttpStatus.OK).json(profile);
+  }
+
+  @Get('user/:userId/profile')
+  @UseGuards(AuthGuard)
+  async getUserProfile(
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<any> {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'User ID is required.' });
+    }
+
+    const profile = await this.authService.getProfile(userId);
+    if (!profile) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .json({ message: 'User not found.' });
+    }
+
+    return res.status(HttpStatus.OK).json(profile);
   }
 }

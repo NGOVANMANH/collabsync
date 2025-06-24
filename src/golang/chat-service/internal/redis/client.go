@@ -1,7 +1,9 @@
 package redis
 
 import (
+	"chat-service/configs"
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/redis/go-redis/v9"
@@ -12,11 +14,11 @@ var (
 	Ctx    = context.Background()
 )
 
-func Init() {
+func Init(conf *configs.RedisConfig) {
 	Client = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "123123123", // if none
-		DB:       0,
+		Addr:     fmt.Sprintf("%s:%d", conf.Host, conf.Port),
+		Password: conf.Password, // if none
+		DB:       conf.Database,
 	})
 
 	if err := Client.Ping(Ctx).Err(); err != nil {

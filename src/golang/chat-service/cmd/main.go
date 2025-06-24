@@ -1,56 +1,29 @@
 package main
 
 import (
-	"chat-service/configs"
-	"chat-service/internal/db"
-	"chat-service/internal/kafka"
-	"chat-service/internal/message"
-	"chat-service/internal/redis"
-	"chat-service/internal/ws"
+	"bufio"
 	"log"
-	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	redis.Init()
-
-	// Database connection
-	db, err := db.Init()
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Failed to initialize database:", err)
-	}
-	defer db.Close()
-
-	// Create repository, service
-	repo := message.NewMessageRepository(db)
-	messageService := message.NewMessageService(repo)
-
-	// Initialize Kafka
-	config := &configs.KafkaConfig{
-		Brokers: []string{"localhost:9092"},
-		Topic:   "chat-messages",
-		GroupID: "chat-service",
+		log.Fatal("Error loading .env file")
 	}
 
-	kafkaService, err := kafka.NewKafkaService(config, messageService)
+	log.Println("Starting chat service...")
+	// enter code for invite people to chat room here
+
+	log.Println("Enter code: ")
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error reading input:", err)
 	}
-	defer kafkaService.Close()
+	log.Printf("You entered: %s", input)
 
-	go func() {
-		err := kafkaService.StartConsume()
-		if err != nil {
-			log.Printf("Consumer error: %v", err)
-		}
-	}()
-
-	ws.InitHub(kafkaService)
-	http.HandleFunc("/ws", ws.HandleWS)
-
-	log.Println("✅ WebSocket server started at :8081")
-	err = http.ListenAndServe(":8081", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
+	log.Println("Chat service started successfully")
 }

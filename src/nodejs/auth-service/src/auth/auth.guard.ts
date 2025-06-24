@@ -14,6 +14,10 @@ export class AuthGuard implements CanActivate {
       .switchToHttp()
       .getRequest<Request & { user?: JwtPayloadDto }>();
 
+    if (this.isServiceToken(request.headers['X-Service-Token'] as string)) {
+      return true; // Allow access for service token
+    }
+
     const authHeader = request.headers.authorization;
 
     const [type, token] = authHeader?.split(' ') || [];
@@ -31,5 +35,9 @@ export class AuthGuard implements CanActivate {
     }
 
     return true;
+  }
+
+  private isServiceToken(token: string): boolean {
+    return token === process.env.SERVICE_TOKEN;
   }
 }

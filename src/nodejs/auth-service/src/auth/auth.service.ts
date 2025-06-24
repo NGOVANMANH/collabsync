@@ -125,4 +125,25 @@ export class AuthService {
       verificationUrl: 'mock-verification-url-ok', // Replace with actual verification URL logic
     };
   }
+
+  async getProfile(userId: string): Promise<UserDto> {
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      displayName: user.displayName,
+      avatar: user.avatar,
+      locale: user.locale,
+      timezone: user.timezone,
+      dateOfBirth: user.dateOfBirth,
+    };
+  }
 }

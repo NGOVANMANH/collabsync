@@ -1,5 +1,11 @@
 package configs
 
+import (
+	"os"
+	"strconv"
+	"strings"
+)
+
 type KafkaConfig struct {
 	Brokers   []string
 	Topic     string
@@ -7,11 +13,17 @@ type KafkaConfig struct {
 	Partition int
 }
 
-func NewKafkaConfig(brokers []string, topic, groupID string, partition int) *KafkaConfig {
+func GetKafkaConfig() *KafkaConfig {
 	return &KafkaConfig{
-		Brokers:   brokers,
-		Topic:     topic,
-		GroupID:   groupID,
-		Partition: partition,
+		Brokers: strings.Split(os.Getenv("KAFKA_BROKERS"), ","),
+		Topic:   os.Getenv("KAFKA_TOPIC"),
+		GroupID: os.Getenv("KAFKA_GROUP_ID"),
+		Partition: func() int {
+			partition, err := strconv.Atoi(os.Getenv("KAFKA_PARTITION"))
+			if err != nil {
+				return 0
+			}
+			return partition
+		}(),
 	}
 }
