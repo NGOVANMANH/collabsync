@@ -3,10 +3,10 @@ set -e
 
 SERVICES=(
   auth
-  ffmpeg
   file
   kafka
   redis
+  chat
 )
 
 echo "[!] Resetting environment: stopping containers and removing volumes..."

@@ -1,9 +1,11 @@
 package main
 
 import (
-	"bufio"
+	"chat-service/internal/kafka"
+	"chat-service/internal/redis"
+	"chat-service/internal/ws"
 	"log"
-	"os"
+	"net/http"
 
 	"github.com/joho/godotenv"
 )
@@ -14,16 +16,26 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	log.Println("Starting chat service...")
-	// enter code for invite people to chat room here
+	redis.Init()
+	defer redis.Close()
 
-	log.Println("Enter code: ")
-	reader := bufio.NewReader(os.Stdin)
-	input, err := reader.ReadString('\n')
-	if err != nil {
-		log.Fatal("Error reading input:", err)
-	}
-	log.Printf("You entered: %s", input)
+	kafka.Init()
+	defer kafka.Close()
 
-	log.Println("Chat service started successfully")
+	kafka.StartConsumer()
+
+	hub := ws.InitHub()
+
+	go hub.Run()
+	http.HandleFunc("/ws", hub.HandleWs)
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	// Serve static files for testing
+	http.Handle("/", http.FileServer(http.Dir("./static/")))
+
+	log.Println("WebSocket server starting on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
