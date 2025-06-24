@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"chat-service/configs"
 	"context"
 	"fmt"
 	"log"
@@ -16,7 +15,7 @@ var (
 	Ctx    = context.Background()
 )
 
-func Init(conf *configs.RedisConfig) {
+func Init() {
 	Client = redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf(
 			"%s:%d",
