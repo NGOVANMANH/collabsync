@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"chat-service/internal/kafka"
 	"log"
 	"sync"
 )
@@ -29,6 +30,9 @@ func (h *Hub) Run() {
 			h.mu.Lock()
 			h.Clients[client.ID] = client
 			h.mu.Unlock()
+			if err := kafka.Produce([]byte("ws:client:connected"), []byte(client.ID)); err != nil {
+				log.Printf("Failed to produce message for client %s: %v", client.ID, err)
+			}
 			log.Printf("Client %s registered. Total clients: %d", client.ID, len(h.Clients))
 
 		case client := <-h.Unregister:

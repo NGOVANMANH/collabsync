@@ -18,7 +18,7 @@ func StartConsumer() {
 				log.Printf("Error reading message: %v", err)
 				continue
 			}
-			log.Printf("Received message: %s", string(msg.Value))
+			log.Printf("Received message: %s:%s", string(msg.Key), string(msg.Value))
 		}
 	}()
 }
